@@ -1,0 +1,10 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: FRONTEND IDL Interfaces X
+Bundle-SymbolicName: idl.frontendX
+Bundle-Version: @bundle_version@.@bundle_qualifier@
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: idl.cf,
+ idl.bulkio
+Export-Package: FRONTENDX
+Bundle-Vendor: REDHAWK
+

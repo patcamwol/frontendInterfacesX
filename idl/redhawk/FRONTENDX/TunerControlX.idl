@@ -1,0 +1,125 @@
+/*
+ * This file is protected by Copyright. Please refer to the COPYRIGHT file 
+ * distributed with this source distribution.
+ * 
+ * This file is part of Frontend Interfaces X.
+ * 
+ * Frontend Interfaces X is free software: you can redistribute it and/or modify it 
+ * under the terms of the GNU Lesser General Public License as published by the 
+ * Free Software Foundation, either version 3 of the License, or (at your 
+ * option) any later version.
+ * 
+ * Frontend Interfaces X is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License 
+ * for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
+
+#ifndef _FRONTENDX_TUNERCONTROL_IDL_
+#define _FRONTENDX_TUNERCONTROL_IDL_
+
+#include "redhawk/FRONTENDX/FrontendX.idl" 
+
+module FRONTENDX {
+
+	/**
+		Mandated Structures and Ports:
+		------------------------------
+		Frontend X mandates four property structures outside of normal REDHAWK properties of "device_kind" and "device_model" :
+			(1) FRONTEND::audio_allocation  - allocation structure to acquire capability on an audio device based off audio settings.
+					Name || ID || Type || Description
+					- allocation_id || FRONTEND::audio_allocation::allocation_id || string || The allocation_id set by the caller. Used by the caller to reference the device uniquely
+					- audio_type || FRONTEND::audio_allocation::audio_type || string || Example Audio Types: CAPTURE, PLAYBACK.
+					- device_control || FRONTEND::tuner_allocation::device_control || boolean || True: Has control over the device to make changes. False: Does not need control and can just attach 
+						to any currently tasked device that satisfies the parameters (essentially a listener)
+					- full_bandwidth_channels || FRONTEND::audio_allocation::full_bandwidth_channels || unsigned short || The number of full bandwidth audio channels.
+					- low_frequency_effect_channels || FRONTEND::audio_allocation::low_frequency_effect_channels || unsigned short || The number of low frequency effect audio channels.
+					- sample_rate || FRONTEND::tuner_allocation::sample_rate || double || Requested sample rate in Hz. This can be ignored for such devices as analog tuners
+					- sample_rate_tolerance || FRONTEND::tuner_allocation::sample_rate_tolerance || double || Allowable Percent above requested sample rate (ie - 100 would be up to twice)
+			(2) FRONTEND::video_allocation - allocation structure to acquire capability on a video device based off video settings.
+                                        Name || ID || Type || Description
+					- allocation_id || FRONTEND::video_allocation::allocation_id || string || The allocation_id set by the caller. Used by the caller to reference the device uniquely
+					- channels || FRONTEND::video_allocation::channels || long || The number of channels in each frame of the video stream
+					- device_control || FRONTEND::video_allocation::device_control || boolean || True: Has control over the device to make changes. False: Does not need control and can just attach 
+                                                to any currently tasked device that satisfies the parameters (essentially a listener)
+					- frame_height || FRONTEND::video_allocation::frame_height || long || Height of frames in the video stream
+					- frame_width || FRONTEND::video_allocation::frame_width || long || Width of frames in the video stream
+					- fps || FRONTEND::video_allocation::fps || double || Frames per second in the video stream
+					- fps_tolerance || FRONTEND::video_allocation::fps_tolerance || double || Allowable Percent above requested frame rate (ie - 100 would be up to twice)
+					- video_type || FRONTEND::video_allocation::video_type || string || Example Video Types: CAPTURE, PLAYBACK.
+			(3) FRONTEND::audio_status - a struct sequence containing the status of all audio devices. There are optional and required fields for this structure. The required fields are listed below:
+					Name || ID || Type || Description
+					- allocation_id_csv || FRONTEND::audio_status::allocation_id_csv || string || Comma separated list of current allocation ids, both control and listeners.
+					- audio_type || FRONTEND::audio_status::audio_type || string || Example Audio Types: CAPTURE, PLAYBACK.
+					- enabled || FRONTEND::audio_status::enabled || boolean || True is audio device is enabled. Can be allocated but disabled
+					- full_bandwidth_channels_max :: FRONTEND::audio_status::full_bandwidth_channels_max || unsigned short || The maximum number of full bandwidth audio channels.
+					- low_frequency_effect_channels_max || FRONTEND::audio_status::low_frequency_effect_channels_max || unsigned short || The maximum number of low frequency effect audio channels.
+					- sample_rate || FRONTEND::audio_status::sample_rate || double || Current sample rate in Sps.
+			(4) FRONTEND::video_status - a struct sequence containing the status of all video devices. There are optional and required fields for this structure. The required fields are listed below:
+					Name || ID || Type || Description
+					- allocation_id_csv || FRONTEND::video_status::allocation_id_csv || string || Comma separated list of current allocation ids, both control and listeners.
+					- channels || FRONTEND::video_status::channels || long || The number of channels in each from of the video stream
+					- enabled || FRONTEND::video_status::enabled || boolean || True is video device is enabled. Can be allocated but disabled
+					- frame_height || FRONTEND::video_status::frame_height || long || Current height of frames in the video stream
+					- frame_width || FRONTEND::video_status::frame_width || long || Current width of frames in the video stream
+					- fps || FRONTEND::video_status::fps || double || Current frames per second in the video stream
+					- video_type || FRONTEND::video_status::video_type || string || Example Video Types: CAPTURE, PLAYBACK.
+		Usual port additions include a input (provides) port for the tuner control as well as an output (uses) BULKIO data port that follows the naming convention [interface]_[in/out]. Examples
+		include dataShort_out, dataSDDS_out,  dataOctet_in, and DigitalTuner_in.
+		
+		
+		Audio Types:
+		------------
+		Frontend audio devices are separated in two audio types based on functionality. The base supported types are listed below but can be extended (ie - new types can be created)
+		to satisy ones CONOP.
+			- CAPTURE: Microphone (input analog, output digital)
+			- PLAYBACK: Speaker (input digital, output analog)
+
+		Video Types:
+		------------
+		Frontend video devices are separated in two video types based on functionality. The base supported types are listed below but can be extended (ie - new types can be created)
+		to satisfy ones CONOP.
+			- CAPTURE: Camera (input analog, output digital)
+			- PLAYBACK: Screen (input digital, output digital
+			
+			
+			
+		Allocation ID:
+		--------------
+		This interface reuses the concept of an allocation id. An allocation id is a unique identifier given to the device at allocation time. For the 
+		life of that allocation, that specific device is referenced by that unique allocation id. When that device is no longer needed, a deallocation occurs on that allocation id, 
+		thus freeing the device. 
+		
+		
+		
+		Data Egress:
+		------------
+		Multi-device frontend devices requires customization of the output port. In this case, data from all devices are sent out a single output port named "data[Type]_out" (ie - dataShort_out). Since there
+		are multiple streams going out of the port, data is routed based off the streams "allocation_id" and the ports "connection_id". For example, lets say you have 3 devices allocated with the respective 
+		allocation id's: allocID_1, allocID_2, and allocID_3. Now lets say you want to make a connection to the device and get the second tuners data. What you would have to do is to connect to the data[Type]_out 
+		port with the connection_id set to "allocID_2". 
+	
+	*/
+
+
+    /***********************/
+    /**     CONSTANTS      */
+    /***********************/
+    
+    /** Device Kind */
+    const string FE_AUDIO_DEVICE_KIND = "FRONTEND::AUDIO";
+    const string FE_VIDEO_DEVICE_KIND = "FRONTEND::VIDEO";
+
+	/** --- Audio Types - Expandable list of supported FE audio types --- */
+	const string AUDIO_TYPE_CAPTURE = "CAPTURE";
+	const string AUDIO_TYPE_PLAYBACK = "PLAYBACK";
+	
+	/* --- Video Types - Expandable list of supported FE video types --- */
+	const string VIDEO_TYPE_CAPTURE = "CAPTURE";
+	const string VIDEO_TYPE_PLAYBACK = "PLAYBACK";
+
+};
+#endif
