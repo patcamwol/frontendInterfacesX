@@ -31,7 +31,8 @@ import CF.DevicePackage.InvalidCapacityHelper;
 import CF.DevicePackage.InvalidState;
 import CF.DevicePackage.UsageType;
 import CF.InvalidObjectReference;
-import frontend.BadParameterException;
+import frontend.*;
+import FRONTEND.BadParameterException;
 import java.lang.Math.*;
 import java.lang.reflect.*;
 import java.text.*;
@@ -63,19 +64,19 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
 
     /* validateRequestVsSRI is a helper function to check that the input data stream can support
      * the allocation request. True is returned upon success, otherwise
-     * Frontend.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    public boolean validateRequestVsSRI(final frontendX.FEXTypes.frontend_audio_allocation_struct request, final BULKIO.StreamSRI upstream_sri) throws Frontend.BadParameterException {
+    public boolean validateRequestVsSRI(final frontendX.FEXTypes.frontend_audio_allocation_struct request, final BULKIO.StreamSRI upstream_sri) throws BadParameterException {
 
         // check sample rate
         double upstream_sr = 1/upstream_sri.xdelta;
-        upstream_sr /= (request.full_bandwidth_channels + request.low_frequency_effect_channels);
-        double min_requested_sample_rate = request.sample_rate;
-        double max_requested_sample_rate = request.sample_rate+request.sample_rate * request.sample_rate_tolerance/100.0;
+        upstream_sr /= (request.full_bandwidth_channels.getValue() + request.low_frequency_effect_channels.getValue());
+        double min_requested_sample_rate = request.sample_rate.getValue();
+        double max_requested_sample_rate = request.sample_rate.getValue()+request.sample_rate.getValue() * request.sample_rate_tolerance.getValue()/100.0;
 
         // check vs. upstream sample rate (ensure min request <= upstream <= max request)
-        if ( !validateRequest(min_requested_sample_rate, max_requested_sample_rate, upstream_sample_rate) ){
-            throw Frontend.BadParameterException("INVALID REQUEST -- upstream sr does not agree with sr request");
+        if ( !validateRequest(min_requested_sample_rate, max_requested_sample_rate, upstream_sr) ){
+            throw new BadParameterException("INVALID REQUEST -- upstream sr does not agree with sr request");
         }
 
         return true;
@@ -83,21 +84,21 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
 
     /* validateRequestVsDevice is a helper function to check that the input data stream and the
      * device can support an allocation request. True is returned upon success, otherwise 
-     * Frontend.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    bool validateRequestVsDevice(final frontend_audio_allocation_struct request, final BULKIO.StreamSRI upstream_sri,
-            double max_device_sample_rate){
+    boolean validateRequestVsDevice(final frontendX.FEXTypes.frontend_audio_allocation_struct request, final BULKIO.StreamSRI upstream_sri,
+            double max_device_sample_rate) throws BadParameterException {
 
         // check if request can be satisfied using the available upstream data
         if( !validateRequestVsSRI(request,upstream_sri) ){
-            throw Frontend.BadParameterException("INVALID REQUEST -- falls outside of input data stream");
+            throw new BadParameterException("INVALID REQUEST -- falls outside of input data stream");
         }
 
         // check device constraints
 
         // check vs. device sample rate capability (ensure 0 <= request <= max device capability)
-        if ( !validateRequest(0,max_device_sample_rate,request.sample_rate) ){
-            throw Frontend.BadParameterException("INVALID REQUEST -- device capabilities cannot support sr request");
+        if ( !validateRequest(0,max_device_sample_rate,request.sample_rate.getValue()) ){
+            throw new BadParameterException("INVALID REQUEST -- device capabilities cannot support sr request");
         }
 
         return true;
@@ -105,15 +106,15 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
 
     /* validateRequestVsDevice is a helper function to check that the analog capabilities and the
      * device can support the allocation request. True is returned upon success, otherwise 
-     * Frontend.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    bool validateRequestVsDevice(final frontend_audio_allocation_struct request, double max_device_sample_rate){
+    boolean validateRequestVsDevice(final frontendX.FEXTypes.frontend_audio_allocation_struct request, double max_device_sample_rate) throws BadParameterException {
 
         // check device constraints
 
         // check vs. device sample rate capability (ensure 0 <= request <= max device capability)
-        if ( !validateRequest(0,max_device_sample_rate,request.sample_rate) ){
-            throw Frontend.BadParameterException("INVALID REQUEST -- device capabilities cannot support sr request");
+        if ( !validateRequest(0,max_device_sample_rate,request.sample_rate.getValue()) ){
+            throw new BadParameterException("INVALID REQUEST -- device capabilities cannot support sr request");
         }
 
         return true;
@@ -143,8 +144,8 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                 deallocateAudioDevice(capacity);
             }
         });
-        frontend_listener_allocation.setAllocator(new Allocator<FRONTEND.FETypes.frontend_listener_allocation_struct>() {
-            public boolean allocate(FRONTEND.FETypes.frontend_listener_allocation_struct capacity) {
+        frontend_listener_allocation.setAllocator(new Allocator<frontend.FETypes.frontend_listener_allocation_struct>() {
+            public boolean allocate(frontend.FETypes.frontend_listener_allocation_struct capacity) {
                 boolean status = false;
                 try{
                     status = allocateListener(capacity);
@@ -155,7 +156,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                 }
                 return status;
             }
-            public void deallocate(FRONTEND.FETypes.frontend_listener_allocation_struct capacity){
+            public void deallocate(frontend.FETypes.frontend_listener_allocation_struct capacity){
                 deallocateListener(capacity);
             }
         });
@@ -352,7 +353,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
         usageState = getUsageState();
     }
 
-    public boolean allocateListener(FRONTEND.FETypes.frontend_listener_allocation_struct frontend_listener_allocation) throws CF.DevicePackage.InvalidCapacity, Exception {
+    public boolean allocateListener(frontend.FETypes.frontend_listener_allocation_struct frontend_listener_allocation) throws CF.DevicePackage.InvalidCapacity, Exception {
         try{
             // Check validity of allocation_id's
             if (frontend_listener_allocation.existing_allocation_id == null || 
@@ -377,7 +378,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                 int audio_device_id = getAudioDeviceMapping(frontend_listener_allocation.existing_allocation_id.getValue());
                 if (audio_device_id < 0){
                     logger.info("allocateListener: UNKNOWN CONTROL ALLOCATION ID: ["+ frontend_listener_allocation.existing_allocation_id.getValue() +"]");
-                    throw new Frontend.BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
+                    throw new FRONTENDX.BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
                 }
 
                 // listener allocations are not permitted for PLAYBACK
@@ -400,14 +401,14 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                exceptionMessage.indexOf("ALLOCATION_ID ALREADY IN USE") == -1){
             }
             throw e;
-        } catch (Frontend.BadParameterException e){
+        } catch (FRONTENDX.BadParameterException e){
             return false;
         } catch (Exception e){
             throw e;
         }
     }
 
-    public void deallocateListener(FRONTEND.FETypes.frontend_listener_allocation_struct frontend_listener_allocation){
+    public void deallocateListener(frontend.FETypes.frontend_listener_allocation_struct frontend_listener_allocation){
         try{
             int audio_device_id = getAudioDeviceMapping(frontend_listener_allocation.listener_allocation_id.getValue());
             if (audio_device_id < 0){
@@ -630,7 +631,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
             "FRONTEND::audio_allocation", //id
             "frontend_audio_allocation", //name
             frontendX.FEXTypes.frontend_audio_allocation_struct.class, //type
-            new frontend.FETypes.frontend_audio_allocation_struct(), //default value
+            new frontendX.FEXTypes.frontend_audio_allocation_struct(), //default value
             Mode.READWRITE, //mode
             new Kind[] {Kind.ALLOCATION} //kind
             );
@@ -639,8 +640,8 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
         new StructProperty<frontend.FETypes.frontend_listener_allocation_struct>(
             "FRONTEND::listener_allocation", //id
             "frontend_listener_allocation", //name
-            FRONTEND.FETypes.frontend_listener_allocation_struct.class, //type
-            new FRONTEND.FETypes.frontend_listener_allocation_struct(), //default value
+            frontend.FETypes.frontend_listener_allocation_struct.class, //type
+            new frontend.FETypes.frontend_listener_allocation_struct(), //default value
             Mode.READWRITE, //mode
             new Kind[] {Kind.ALLOCATION} //kind
             );

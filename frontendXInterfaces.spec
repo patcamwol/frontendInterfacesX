@@ -33,7 +33,7 @@ Prefix: %{_prefix}
 %bcond_without java
 
 Summary:        The frontend X library for REDHAWK
-Name:           frontendInterfacesX
+Name:           frontendXInterfaces
 Version:        1.0.0
 Release:        1%{?dist}
 License:        LGPLv3+
@@ -74,15 +74,15 @@ rm -rf --preserve-root $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_datadir}/idl/redhawk/FRONTENDX
 %{_includedir}/redhawk/FRONTENDX
-%{_prefix}/lib/python/redhawk/frontendInterfacesX
+%{_prefix}/lib/python/redhawk/frontendXInterfaces
 %{_prefix}/lib/python/frontendX
-%{_libdir}/libfrontendInterfacesX.*
-%{_libdir}/pkgconfig/frontendInterfacesX.pc
+%{_libdir}/libfrontendXInterfaces.*
+%{_libdir}/pkgconfig/frontendXInterfaces.pc
 %{_includedir}/frontendX
 %{_libdir}/libfrontendX-*
 %{_libdir}/pkgconfig/frontendX.pc
 %if 0%{?rhel} >= 6
-%{_prefix}/lib/python/frontendInterfacesX-%{version}-py%{python_version}.egg-info
+%{_prefix}/lib/python/frontendXInterfaces-%{version}-py%{python_version}.egg-info
 %{_prefix}/lib/python/frontendX-%{version}-py%{python_version}.egg-info
 %endif
 %if %{with java}

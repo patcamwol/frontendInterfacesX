@@ -4,9 +4,9 @@ libdir=@libdir@
 idldir=${prefix}/share/idl
 includedir=@includedir@
 
-Name: frontendInterfacesX
-Description: frontendInterfacesX for REDHAWK
+Name: frontendXInterfaces
+Description: frontendXInterfaces for REDHAWK
 Requires: bulkioInterfaces >= 2.0.0
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -lfrontendInterfacesX
+Libs: -L${libdir} -lfrontendXInterfaces
 Cflags: -I${includedir}/redhawk

@@ -59,16 +59,16 @@ public class FEXTypes {
             new UShortProperty(
                 "FRONTEND::audio_allocation::full_bandwidth_channels", //id
                 "full_bandwidth_channels", //name
-                0, //default value
+                (short)0, //default value
                 Mode.READWRITE, //mode
                 Action.EXTERNAL, //action
                 new Kind[] {Kind.CONFIGURE} //kind
                 );
-        public final UShortProperty bandwidth =
+        public final UShortProperty low_frequency_effect_channels =
             new UShortProperty(
                 "FRONTEND::audio_allocation::low_frequency_effect_channels", //id
                 "low_frequency_effect_channels", //name
-                0, //default value
+                (short)0, //default value
                 Mode.READWRITE, //mode
                 Action.EXTERNAL, //action
                 new Kind[] {Kind.CONFIGURE} //kind
@@ -149,7 +149,7 @@ public class FEXTypes {
             new UShortProperty(
                 "FRONTEND::audio_status::full_bandwidth_channels", //id
                 "full_bandwidth_channels", //name
-                0, //default value
+                (short)0, //default value
                 Mode.READWRITE, //mode
                 Action.EXTERNAL, //action
                 new Kind[] {Kind.CONFIGURE} //kind
@@ -158,7 +158,7 @@ public class FEXTypes {
             new UShortProperty(
                 "FRONTEND::audio_status::low_frequency_effect_channels", //id
                 "low_frequency_effect_channels", //name
-                0, //default value
+                (short)0, //default value
                 Mode.READWRITE, //mode
                 Action.EXTERNAL, //action
                 new Kind[] {Kind.CONFIGURE} //kind

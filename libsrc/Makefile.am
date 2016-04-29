@@ -31,16 +31,16 @@ AUTOMAKE_OPTIONS = subdir-objects
 ## to provide a way for the user to supply additional arguments.
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 
-lib_LTLIBRARIES = libfrontendX-@FRONTENDX_API_VERSION@.la
-libfrontendX_@FRONTENDX_API_VERSION@_la_LDFLAGS = -version-info $(FRONTENDX_SO_VERSION)
-libfrontendX_@FRONTENDX_API_VERSION@_la_LIBADD = $(BULKIO_LIBS) $(OSSIE_LIBS)
+lib_LTLIBRARIES = libfrontendx-@FRONTENDX_API_VERSION@.la
+libfrontendx_@FRONTENDX_API_VERSION@_la_LDFLAGS = -version-info $(FRONTENDX_SO_VERSION)
+libfrontendx_@FRONTENDX_API_VERSION@_la_LIBADD = $(BULKIO_LIBS) $(OSSIE_LIBS)
 
-libfrontendX_@FRONTENDX_API_VERSION@_la_SOURCES = \
+libfrontendx_@FRONTENDX_API_VERSION@_la_SOURCES = \
     cpp/fe_audio_device.cpp \
     cpp/fe_video_device.cpp
 
 ## Define the list of public header files and their install location.
-library_includedir = $(includedir)/frontendX
+library_includedir = $(includedir)/frontendx
 library_include_HEADERS = \
 	cpp/fe_audio_device.h \
         cpp/fe_audio_device.cpp \
@@ -64,7 +64,7 @@ library_include_HEADERS = \
 ## shipped with the source tarball.
 #frontend_libincludedir = $(libdir)/frontend-$(FRONTENDX_API_VERSION)/include
 
-libfrontendX_@FRONTENDX_API_VERSION@_la_CXXFLAGS = -Wall -I./cpp -DLOGGING $(FRONTENDX_INF_INCLUDES) $(BOOST_CPPFLAGS) $(OMNIORB_CFLAGS) $(OSSIE_CFLAGS)
+libfrontendx_@FRONTENDX_API_VERSION@_la_CXXFLAGS = -Wall -I./cpp -DLOGGING $(FRONTENDX_INF_INCLUDES) $(BOOST_CPPFLAGS) $(OMNIORB_CFLAGS) $(OSSIE_CFLAGS)
 
 clean-cpp:
 	rm -rf cpp/.deps
@@ -91,6 +91,8 @@ clean-python:
 
 if HAVE_JAVASUPPORT
 
+FRONTEND_CLASSPATH = $(OSSIEHOME)/lib/frontend.jar:$(OSSIEHOME)/lib/FRONTENDInterfaces.jar
+
 @rh_jarfile_rules@
 
 JAVA_DIR := java
@@ -105,15 +107,12 @@ FrontendVideoDevice.java
 java_JARFILES = frontendX.jar
 
 frontendX_jar_SOURCE := $(addprefix $(JAVA_SRCDIR)/frontendX/, $(JAVA_SRCS))
-frontendX_jar_CLASSPATH := $(OSSIE_CLASSPATH):$(BULKIO_CLASSPATH):$(top_builddir)/FRONTENDInterfacesX.jar
+frontendX_jar_CLASSPATH := $(OSSIE_CLASSPATH):$(BULKIO_CLASSPATH):$(FRONTEND_CLASSPATH):$(top_builddir)/FRONTENDXInterfaces.jar
 frontendX_jar_MANIFEST := $(JAVA_DIR)/META-INF/MANIFEST.MF
 frontendX_jar_JARADD := -C $(JAVA_SRCDIR) frontendX
 frontendX_jar_JAVACFLAGS := -g -Xlint
 
-frontendX.jar: $(top_builddir)/FRONTENDInterfacesX.jar
-
-clean-java:
-	@echo "Clean the java"
+frontendX.jar: $(top_builddir)/FRONTENDXInterfaces.jar
 
 else
 
@@ -126,15 +125,20 @@ endif
 # General
 #
 
-.PHONY: all-local all-python build-python install-python clean-python distclean
+.PHONY: all-local all-python build-python install-python clean-python reallyclean
 
 all-local: all-python
 
 install-exec-hook: install-python
 
-clean-local: clean-cpp clean-java clean-python
+clean-local: clean-python
 
-distclean: clean-local
+reallyclean-recursive: reallyclean-local
+
+reallyclean-local: reallyclean
+
+reallyclean: distclean
 	rm -rf cpp/.deps
 	rm -f Makefile.in
 	rm -f Makefile
+	rm -f frontendX.pc

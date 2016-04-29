@@ -18,8 +18,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 
-#ifndef _FRONTENDX_TUNERCONTROL_IDL_
-#define _FRONTENDX_TUNERCONTROL_IDL_
+#ifndef _FRONTENDX_MEDIACONTROL_IDL_
+#define _FRONTENDX_MEDIACONTROL_IDL_
 
 #include "redhawk/FRONTENDX/FrontendX.idl" 
 

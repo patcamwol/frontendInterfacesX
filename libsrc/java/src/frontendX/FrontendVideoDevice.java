@@ -63,19 +63,19 @@ public abstract class FrontendVideoDevice<VideoStatusStructType extends frontend
 
     /* validateRequestVsSRI is a helper function to check that the input data stream can support
      * the allocation request. True is returned upon success, otherwise 
-     * FRONTEND.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    bool validateRequestVsSRI(final frontend_video_allocation_struct request, final BULKIO.StreamSRI upstream_sri){
+    boolean validateRequestVsSRI(final frontendX.FEXTypes.frontend_video_allocation_struct request, final BULKIO.StreamSRI upstream_sri) throws BadParameterException {
 
         // Check if the upstream sample rate falls within the requested tolerable frame rate
         double upstream_fps = 1.0/upstream_sri.xdelta;
         double upstream_frame_rate = upstream_fps / (request.frame_height.getValue() * request.frame_width.getValue() * request.channels.getValue());
-        double min_requested_frame_rate = request.fps;
-        double max_requested_frame_rate = request.fps+request.fps * request.fps_tolerance/100.0;
+        double min_requested_frame_rate = request.fps.getValue();
+        double max_requested_frame_rate = request.fps.getValue()+request.fps.getValue() * request.fps_tolerance.getValue()/100.0;
 
         // check vs. upstream frame rate (ensure min request <= upstream <= max request)
         if ( !validateRequest(min_requested_frame_rate, max_requested_frame_rate, upstream_frame_rate) ){
-            throw FRONTEND.BadParameterException("INVALID REQUEST -- upstream fr does not agree with fr request");
+            throw new BadParameterException("INVALID REQUEST -- upstream fr does not agree with fr request");
         }
 
         return true;
@@ -83,20 +83,20 @@ public abstract class FrontendVideoDevice<VideoStatusStructType extends frontend
 
     /* validateRequestVsDevice is a helper function to check that the input data stream and the
      * device can support an allocation request. True is returned upon success, otherwise 
-     * FRONTEND.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    bool validateRequestVsDevice(final frontend_video_allocation_struct request, final BULKIO.StreamSRI upstream_sri, double max_device_frame_rate){
+    boolean validateRequestVsDevice(final frontendX.FEXTypes.frontend_video_allocation_struct request, final BULKIO.StreamSRI upstream_sri, double max_device_frame_rate) throws BadParameterException {
 
         // check if request can be satisfied using the available upstream data
         if( !validateRequestVsSRI(request,upstream_sri) ){
-            throw FRONTEND.BadParameterException("INVALID REQUEST -- falls outside of input data stream");
+            throw new BadParameterException("INVALID REQUEST -- falls outside of input data stream");
         }
 
         // check device constraints
 
         // check vs. device frame rate capability (ensure 0 <= request <= max device capability)
-        if ( !validateRequest(0,max_device_frame_rate,request.fps) ){
-            throw FRONTEND.BadParameterException("INVALID REQUEST -- device capabilities cannot support fr request");
+        if ( !validateRequest(0,max_device_frame_rate,request.fps.getValue()) ){
+            throw new BadParameterException("INVALID REQUEST -- device capabilities cannot support fr request");
         }
 
         return true;
@@ -104,15 +104,15 @@ public abstract class FrontendVideoDevice<VideoStatusStructType extends frontend
 
     /* validateRequestVsDevice is a helper function to check that the analog capabilities and the
      * device can support the allocation request. True is returned upon success, otherwise 
-     * FRONTEND.BadParameterException is thrown.
+     * BadParameterException is thrown.
      */
-    bool validateRequestVsDevice(final frontend_video_allocation_struct request, double max_device_frame_rate){
+    boolean validateRequestVsDevice(final frontendX.FEXTypes.frontend_video_allocation_struct request, double max_device_frame_rate) throws BadParameterException {
 
         // check device constraints
 
         // check vs. device frame rate capability (ensure 0 <= request <= max device capability)
-        if ( !validateRequest(0,max_device_frame_rate,request.fps) ){
-            throw FRONTEND.BadParameterException("INVALID REQUEST -- device capabilities cannot support fr request");
+        if ( !validateRequest(0,max_device_frame_rate,request.fps.getValue()) ){
+            throw new BadParameterException("INVALID REQUEST -- device capabilities cannot support fr request");
         }
 
         return true;
@@ -380,7 +380,7 @@ public abstract class FrontendVideoDevice<VideoStatusStructType extends frontend
                 int video_device_id = getVideoDeviceMapping(frontend_listener_allocation.existing_allocation_id.getValue());
                 if (video_device_id < 0){
                     logger.info("allocateListener: UNKNOWN CONTROL ALLOCATION ID: ["+ frontend_listener_allocation.existing_allocation_id.getValue() +"]");
-                    throw new FRONTEND.BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
+                    throw new BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
                 }
 
                 // listener allocations are not permitted for playback
@@ -403,7 +403,7 @@ public abstract class FrontendVideoDevice<VideoStatusStructType extends frontend
                exceptionMessage.indexOf("ALLOCATION_ID ALREADY IN USE") == -1){
             }
             throw e;
-        } catch (FRONTEND.BadParameterException e){
+        } catch (BadParameterException e){
             return false;
         } catch (Exception e){
             throw e;

@@ -68,10 +68,10 @@ JAVA_TARGET_VERSION = $(JAVA_SOURCE_VERSION)
 # sources.  For example:
 #        some_file.idl becomes ->
 #            src/cpp/some_fileSK.cpp src/cpp/some_fileDynSK.cpp src/cpp/some_file.h
-lib_LTLIBRARIES = libfrontendInterfacesX.la
-libfrontendInterfacesX_la_SOURCES = $(redhawk_IDL_SOURCES_auto)
-libfrontendInterfacesX_la_LIBADD = $(BULKIO_LIBS) $(OSSIE_LIBS) $(FRONTEND_LIBS)
-libfrontendInterfacesX_la_LDFLAGS = -version-info 1:0:1
+lib_LTLIBRARIES = libfrontendxInterfaces.la
+libfrontendxInterfaces_la_SOURCES = $(redhawk_IDL_SOURCES_auto)
+libfrontendxInterfaces_la_LIBADD = $(BULKIO_LIBS) $(OSSIE_LIBS) $(FRONTEND_LIBS)
+libfrontendxInterfaces_la_LDFLAGS = -version-info 1:0:1
 
 ###############################################################################
 # DO NOT MODIFY ANY LINES BELOW HERE
@@ -97,15 +97,16 @@ SUBDIRS = . libsrc
 ###############################################################################
 # C++ (via automake and libtool)
 pkgconfigdir = $(libdir)/pkgconfig
-dist_pkgconfig_DATA = frontendInterfacesX.pc
+dist_pkgconfig_DATA = frontendXInterfaces.pc
 
 pkgincludedir = $(includedir)/$(LIBRARY_NAME)/$(IDL_MODULE)
-pkginclude_HEADERS = $(filter %.h, $(lib$(LOWER_CASE_IDL_MODULE)InterfacesX_la_SOURCES))
+pkginclude_HEADERS = $(filter %.h, $(lib$(LOWER_CASE_IDL_MODULE)Interfaces_la_SOURCES))
 
 AM_CXXFLAGS = -Wall -I src/cpp -g $(OMNIORB_CFLAGS) $(OSSIE_CFLAGS)
 AM_LIBS = $(OSSIE_LIBS) $(BULKIO_LIBS) $(FRONTEND_LIBS)
 
 src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/%DynSK.cpp src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/%SK.cpp src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/%.h: idl/$(LIBRARY_NAME)/$(IDL_MODULE)/%.idl
+	@echo $(redhawk_IDL_FILES_auto)
 	@mkdir -p "src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)"
 	$(IDL) -I idl $(OSSIE_CFLAGS) $(OSSIE_IDLFLAGS) -C src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE) -bcxx -Wba -Wbd=DynSK.cpp -Wbh=.h -Wbs=SK.cpp -Wbkeep_inc_path $<
 
@@ -118,7 +119,7 @@ clean-cpp:
 # Per redhawk conventions, CORBA modules will be installed to a module
 # <libraryname>.<lowercasemodulename>Interfaces
 
-PYTHON_MODULE_NAME := $(LOWER_CASE_IDL_MODULE)InterfacesX
+PYTHON_MODULE_NAME := $(LOWER_CASE_IDL_MODULE)Interfaces
 PYTHON_PACKAGE := $(LIBRARY_NAME).$(PYTHON_MODULE_NAME)
 PYTHON_BASE := $(subst .,/,$(PYTHON_PACKAGE))
 PY_SRC_OUT_DIR := $(addprefix src/python/, $(subst .,/, $(PYTHON_PACKAGE)))
@@ -179,7 +180,8 @@ clean-python: setup.py
 # Java
 if HAVE_JAVASUPPORT
 
-FRONTEND_IDLPATH = $(OSSIEHOME)/share/idl
+FRONTEND_IDLDIR = $(OSSIEHOME)/share/idl
+FRONTEND_CLASSPATH = $(OSSIEHOME)/lib/frontend.jar:$(OSSIEHOME)/lib/FRONTENDInterfaces.jar
 
 @rh_idlj_rules@
 @rh_jarfile_rules@
@@ -194,7 +196,7 @@ manifest_edit = $(SED) \
   -e 's|@bundle_version[@]|$(BUNDLE_VERSION)|g' \
   -e 's|@bundle_qualifier[@]|$(BUNDLE_QUALIFIER)|g'
 
-java_JARFILES = FRONTENDInterfacesX.jar
+java_JARFILES = FRONTENDXInterfaces.jar
 IDLJFLAGS = -i idl -i $(OSSIE_IDLDIR)
 IDLJ_BUILDDIR = $(IDLJ_SRC_DEST)
 
@@ -202,10 +204,10 @@ IDLJ_BUILDDIR = $(IDLJ_SRC_DEST)
 vpath %.idl idl/redhawk/FRONTENDX
 idlj_IDLSRC = $(IDL_FILES)
 
-FRONTENDInterfacesX_jar_SOURCE = $(idlj_SOURCE)
-FRONTENDInterfacesX_jar_CLASSPATH = $(OSSIE_CLASSPATH):$(BULKIO_CLASSPATH):$(FRONTEND_CLASSPATH)
-FRONTENDInterfacesX_jar_MANIFEST = build/java/META-INF/MANIFEST.MF
-FRONTENDInterfacesX_jar_JARADD = -C $(IDLJ_SRC_DEST) .
+FRONTENDXInterfaces_jar_SOURCE = $(idlj_SOURCE)
+FRONTENDXInterfaces_jar_CLASSPATH = $(OSSIE_CLASSPATH):$(BULKIO_CLASSPATH):$(FRONTEND_CLASSPATH)
+FRONTENDXInterfaces_jar_MANIFEST = build/java/META-INF/MANIFEST.MF
+FRONTENDXInterfaces_jar_JARADD = -C $(IDLJ_SRC_DEST) .
 
 build/java/META-INF/MANIFEST.MF: MANIFEST.MF.in Makefile
 	@mkdir -p build/java/META-INF
@@ -220,7 +222,7 @@ endif
 # General
 
 zip-src:
-	zip 	$(LOWER_CASE_IDL_MODULE)InterfacesX.zip \
+	zip 	$(LOWER_CASE_IDL_MODULE)Interfaces.zip \
 		$(IDL_FILES) \
 		Makefile.am \
 		configure.ac \
@@ -233,8 +235,11 @@ zip-src:
 		.settings/org.eclipse.cdt.managedbuilder.core.prefs \
 		README
 
+reallyclean-recursive: reallyclean-local
 
-distclean: clean
+reallyclean-local: reallyclean
+
+reallyclean: clean
 	rm -f configure
 	rm -f Makefile.in
 	rm -f config.log
@@ -254,3 +259,4 @@ distclean: clean
 	rm -f *.lo
 	rm -f *.o
 	rm -rf src
+	rm -f frontendXInterfaces.pc

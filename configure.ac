@@ -18,7 +18,7 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 #
 
-AC_INIT(frontendInterfacesX, 1.0.0)
+AC_INIT(frontendXInterfaces, 1.0.0)
 
 AM_INIT_AUTOMAKE(nostdinc)
 AC_PROG_CC
@@ -51,7 +51,7 @@ RH_PKG_IDLDIR([BULKIO], [bulkioInterfaces])
 
 PKG_CHECK_MODULES([FRONTEND], [frontendInterfaces >= 2.3])
 AC_CHECK_PYMODULE(frontend, [], [AC_MSG_ERROR([the python frontend module is required])])
-#RH_PKG_IDLDIR([FRONTEND], [frontendInterfaces])
+RH_PKG_IDLDIR([FRONTEND], [frontendInterfaces])
 
 AC_SUBST([FRONTENDX_SO_VERSION],[0:0:0])
 AC_SUBST([FRONTENDX_API_VERSION],[1.0])
@@ -83,7 +83,6 @@ if test "x$enable_java" != "xno"; then
   # Find required libraries
   RH_PKG_CLASSPATH([OSSIE], [ossie])
   RH_PKG_CLASSPATH([BULKIO], [bulkio])
-  RH_PKG_CLASSPATH([FRONTEND], [frontend])
 
   # Set Java installation directory
   AC_SUBST([javadir], '${prefix}/lib')
@@ -92,7 +91,7 @@ if test "x$enable_java" != "xno"; then
 fi
 AM_CONDITIONAL(HAVE_JAVASUPPORT, test $HAVE_JAVASUPPORT = yes)
 
-AC_CONFIG_FILES([Makefile frontendInterfacesX.pc])
+AC_CONFIG_FILES([Makefile frontendXInterfaces.pc])
 if test "$enable_base_classes" != "no"; then
   if test "$HAVE_JAVASUPPORT = yes"; then
     AC_CONFIG_FILES([libsrc/java/META-INF/MANIFEST.MF])

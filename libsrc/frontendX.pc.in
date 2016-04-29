@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: frontendX
 Description: FRONTENDX base class library
-Requires: frontendInterfacesX >= @PACKAGE_VERSION@
+Requires: frontendXInterfaces >= @PACKAGE_VERSION@
 Version: @FRONTEND_API_VERSION@
 Libs: -L${libdir} -lfrontendX-@FRONTENDX_API_VERSION@
 Cflags: -I${includedir}/frontendX

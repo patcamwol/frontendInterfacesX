@@ -32,7 +32,6 @@ from ossie.utils import model
 import threading
 from bulkio.bulkioInterfaces import BULKIO
 from redhawk.frontendInterfaces import FRONTEND
-from redhawk.frontendInterfacesX import FRONTENDX
 from fex_types import *
 
 ''' validateRequestVsSRI is a helper function to check that the input data stream can support
