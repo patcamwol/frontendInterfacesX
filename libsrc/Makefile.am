@@ -100,6 +100,12 @@ JAVA_SRCDIR := $(JAVA_DIR)/src
 JAVA_BINDIR := $(JAVA_DIR)/bin
 
 JAVA_SRCS := \
+InFrontendAudioPort.java \
+OutFrontendAudioPort.java \
+FrontendAudioDelegate.java \
+InFrontendVideoPort.java \
+OutFrontendVideoPort.java \
+FrontendVideoDelegate.java \
 FEXTypes.java \
 FrontendAudioDevice.java \
 FrontendVideoDevice.java

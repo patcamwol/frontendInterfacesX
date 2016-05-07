@@ -378,7 +378,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                 int audio_device_id = getAudioDeviceMapping(frontend_listener_allocation.existing_allocation_id.getValue());
                 if (audio_device_id < 0){
                     logger.info("allocateListener: UNKNOWN CONTROL ALLOCATION ID: ["+ frontend_listener_allocation.existing_allocation_id.getValue() +"]");
-                    throw new FRONTENDX.BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
+                    throw new FRONTEND.BadParameterException("UNKNOWN CONTROL ALLOCATION ID");
                 }
 
                 // listener allocations are not permitted for PLAYBACK
@@ -401,7 +401,7 @@ public abstract class FrontendAudioDevice<audioStatusStructType extends frontend
                exceptionMessage.indexOf("ALLOCATION_ID ALREADY IN USE") == -1){
             }
             throw e;
-        } catch (FRONTENDX.BadParameterException e){
+        } catch (FRONTEND.BadParameterException e){
             return false;
         } catch (Exception e){
             throw e;

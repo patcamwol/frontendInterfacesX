@@ -97,7 +97,7 @@ SUBDIRS = . libsrc
 ###############################################################################
 # C++ (via automake and libtool)
 pkgconfigdir = $(libdir)/pkgconfig
-dist_pkgconfig_DATA = frontendXInterfaces.pc
+dist_pkgconfig_DATA = frontendxInterfaces.pc
 
 pkgincludedir = $(includedir)/$(LIBRARY_NAME)/$(IDL_MODULE)
 pkginclude_HEADERS = $(filter %.h, $(lib$(LOWER_CASE_IDL_MODULE)Interfaces_la_SOURCES))
