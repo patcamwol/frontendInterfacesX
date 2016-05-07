@@ -33,3 +33,7 @@ from audio_device import *
 
 from video_device import *
 
+from input_ports import *
+
+from output_ports import *
+
