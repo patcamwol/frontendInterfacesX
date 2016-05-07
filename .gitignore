@@ -17,9 +17,9 @@ config.status
 config.sub
 configure
 depcomp
-frontendInterfacesX.pc
+frontendxInterfaces.pc
 install-sh
-libfrontendInterfacesX.la
+libfrontendxInterfaces.la
 libtool
 ltmain.sh
 missing
@@ -28,4 +28,4 @@ missing
 /libsrc/cpp/.dirstamp
 /libsrc/java/META-INF/MANIFEST.MF
 /libsrc/frontendX.pc
-/libsrc/libfrontendX-*.la
+/libsrc/libfrontendx-*.la

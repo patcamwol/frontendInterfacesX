@@ -23,4 +23,6 @@
 #include "fe_audio_struct_props.h"
 #include "fe_video_device.h"
 #include "fe_video_struct_props.h"
+#include "fe_audio_port_impl.h"
+#include "fe_video_port_impl.h"
 #include "fex_types.h"

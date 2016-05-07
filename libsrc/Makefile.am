@@ -141,4 +141,4 @@ reallyclean: distclean
 	rm -rf cpp/.deps
 	rm -f Makefile.in
 	rm -f Makefile
-	rm -f frontendX.pc
+	rm -f frontendx.pc

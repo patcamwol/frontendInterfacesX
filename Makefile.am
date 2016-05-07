@@ -259,4 +259,4 @@ reallyclean: clean
 	rm -f *.lo
 	rm -f *.o
 	rm -rf src
-	rm -f frontendXInterfaces.pc
+	rm -f frontendxInterfaces.pc

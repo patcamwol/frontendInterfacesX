@@ -91,11 +91,11 @@ if test "x$enable_java" != "xno"; then
 fi
 AM_CONDITIONAL(HAVE_JAVASUPPORT, test $HAVE_JAVASUPPORT = yes)
 
-AC_CONFIG_FILES([Makefile frontendXInterfaces.pc])
+AC_CONFIG_FILES([Makefile frontendxInterfaces.pc])
 if test "$enable_base_classes" != "no"; then
   if test "$HAVE_JAVASUPPORT = yes"; then
     AC_CONFIG_FILES([libsrc/java/META-INF/MANIFEST.MF])
   fi
-  AC_CONFIG_FILES([libsrc/Makefile libsrc/frontendX.pc])
+  AC_CONFIG_FILES([libsrc/Makefile libsrc/frontendx.pc])
 fi
 AC_OUTPUT

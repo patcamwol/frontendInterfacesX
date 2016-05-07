@@ -28,6 +28,7 @@
 
 #include "bulkio/bulkio.h"
 #include "fe_video_struct_props.h"
+#include "fe_video_port_impl.h"
 #include "fex_types.h"
 #include "ossie/prop_helpers.h"
 

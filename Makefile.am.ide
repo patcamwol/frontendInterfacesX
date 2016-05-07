@@ -5,13 +5,9 @@ redhawk_IDL_MODULE_auto := FRONTENDX
 
 # This is a list of all IDL files in the root directory of the project
 redhawk_IDL_FILES_auto =
-redhawk_IDL_FILES_auto += FrontendX.idl
 redhawk_IDL_FILES_auto += MediaControl.idl
 
 redhawk_IDL_SOURCES_auto =
-redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/FrontendXSK.cpp
-redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/FrontendXDynSK.cpp
-redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/FrontendX.h
 redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/MediaControlSK.cpp
 redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/MediaControlDynSK.cpp
 redhawk_IDL_SOURCES_auto += src/cpp/$(LIBRARY_NAME)/$(IDL_MODULE)/MediaControl.h

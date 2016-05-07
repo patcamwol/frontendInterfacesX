@@ -21,7 +21,7 @@
 #ifndef _FRONTENDX_MEDIACONTROL_IDL_
 #define _FRONTENDX_MEDIACONTROL_IDL_
 
-#include "redhawk/FRONTENDX/FrontendX.idl" 
+#include "redhawk/FRONTEND/Frontend.idl" 
 
 module FRONTENDX {
 
@@ -55,8 +55,8 @@ module FRONTENDX {
 					- allocation_id_csv || FRONTEND::audio_status::allocation_id_csv || string || Comma separated list of current allocation ids, both control and listeners.
 					- audio_type || FRONTEND::audio_status::audio_type || string || Example Audio Types: CAPTURE, PLAYBACK.
 					- enabled || FRONTEND::audio_status::enabled || boolean || True is audio device is enabled. Can be allocated but disabled
-					- full_bandwidth_channels_max :: FRONTEND::audio_status::full_bandwidth_channels_max || unsigned short || The maximum number of full bandwidth audio channels.
-					- low_frequency_effect_channels_max || FRONTEND::audio_status::low_frequency_effect_channels_max || unsigned short || The maximum number of low frequency effect audio channels.
+					- full_bandwidth_channels :: FRONTEND::audio_status::full_bandwidth_channels || unsigned short || The number of full bandwidth audio channels.
+					- low_frequency_effect_channels || FRONTEND::audio_status::low_frequency_effect_channels || unsigned short || The number of low frequency effect audio channels.
 					- sample_rate || FRONTEND::audio_status::sample_rate || double || Current sample rate in Sps.
 			(4) FRONTEND::video_status - a struct sequence containing the status of all video devices. There are optional and required fields for this structure. The required fields are listed below:
 					Name || ID || Type || Description
@@ -120,6 +120,86 @@ module FRONTENDX {
 	/* --- Video Types - Expandable list of supported FE video types --- */
 	const string VIDEO_TYPE_CAPTURE = "CAPTURE";
 	const string VIDEO_TYPE_PLAYBACK = "PLAYBACK";
+
+    /*************************/
+    /***      INTERFACE      */
+    /*************************/
+
+    interface FrontendAudio
+    {
+        /** Get the type of audio device (ie- CAPTURE or PLAYBACK) associated with this allocation id*/
+        string getAudioType(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Returns whether this allocation id has control (modification privledges) over the audio device*/
+        boolean getAudioDeviceControl(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Retrieves the number of full bandwidth channels associated with this allocation id */
+        unsigned short getFullBandwidthChannels(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Retrieves the number of low frequency effect channels associated with this allocation id */
+        unsigned short getLowFrequencyEffectChannels(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Enable/Disable Audio Device - Expected to keep current audio device settings on a disable and an EOS to be sent */
+        void setAudioEnable(in string id, in boolean enable)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+        boolean getAudioEnable(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Set output sample rate  */
+        void setAudioOutputSampleRate(in string id,in double sr)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+        double getAudioOutputSampleRate(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Key/Value pair of entire audio status structure */
+        CF::Properties getAudioStatus(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+    };
+
+
+    interface FrontendVideo
+    {
+        /** Get the type of video device (ie- CAPTURE or PLAYBACK) associated with this allocation id*/
+        string getVideoType(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Returns whether this allocation id has control (modification privledges) over the video device*/
+        boolean getVideoDeviceControl(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Retrieves the number of channels associated with this allocation id */
+        long getChannels(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Retrieves the frame height associated with this allocation id */
+        long getFrameHeight(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Retrieves the frame width associated with this allocation id */
+        long getFrameWidth(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Enable/Disable Video Device - Expected to keep current video device settings on a disable and an EOS to be sent */
+        void setVideoEnable(in string id, in boolean enable)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+        boolean getVideoEnable(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Set output frame rate  */
+        void setVideoOutputFrameRate(in string id,in double sr)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+        double getVideoOutputFrameRate(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+
+        /** Key/Value pair of entire video status structure */
+        CF::Properties getVideoStatus(in string id)
+                raises (FRONTEND::FrontendException, FRONTEND::BadParameterException, FRONTEND::NotSupportedException);
+    };
+
 
 };
 #endif
