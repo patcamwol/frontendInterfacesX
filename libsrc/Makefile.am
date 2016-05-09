@@ -44,9 +44,11 @@ library_includedir = $(includedir)/frontendx
 library_include_HEADERS = \
 	cpp/fe_audio_device.h \
         cpp/fe_audio_device.cpp \
+	cpp/fe_audio_port_impl.h \
 	cpp/fe_audio_struct_props.h \
 	cpp/fe_video_device.h \
 	cpp/fe_video_device.cpp \
+	cpp/fe_video_port_impl.h \
 	cpp/fe_video_struct_props.h \
 	cpp/frontendX.h \
 	cpp/fex_types.h

@@ -33,12 +33,12 @@ module FRONTENDX {
 					Name || ID || Type || Description
 					- allocation_id || FRONTEND::audio_allocation::allocation_id || string || The allocation_id set by the caller. Used by the caller to reference the device uniquely
 					- audio_type || FRONTEND::audio_allocation::audio_type || string || Example Audio Types: CAPTURE, PLAYBACK.
-					- device_control || FRONTEND::tuner_allocation::device_control || boolean || True: Has control over the device to make changes. False: Does not need control and can just attach 
+					- device_control || FRONTEND::audio_allocation::device_control || boolean || True: Has control over the device to make changes. False: Does not need control and can just attach 
 						to any currently tasked device that satisfies the parameters (essentially a listener)
 					- full_bandwidth_channels || FRONTEND::audio_allocation::full_bandwidth_channels || unsigned short || The number of full bandwidth audio channels.
 					- low_frequency_effect_channels || FRONTEND::audio_allocation::low_frequency_effect_channels || unsigned short || The number of low frequency effect audio channels.
-					- sample_rate || FRONTEND::tuner_allocation::sample_rate || double || Requested sample rate in Hz. This can be ignored for such devices as analog tuners
-					- sample_rate_tolerance || FRONTEND::tuner_allocation::sample_rate_tolerance || double || Allowable Percent above requested sample rate (ie - 100 would be up to twice)
+					- sample_rate || FRONTEND::audio_allocation::sample_rate || double || Requested sample rate in Hz. This can be ignored for such devices as analog audios
+					- sample_rate_tolerance || FRONTEND::audio_allocation::sample_rate_tolerance || double || Allowable Percent above requested sample rate (ie - 100 would be up to twice)
 			(2) FRONTEND::video_allocation - allocation structure to acquire capability on a video device based off video settings.
                                         Name || ID || Type || Description
 					- allocation_id || FRONTEND::video_allocation::allocation_id || string || The allocation_id set by the caller. Used by the caller to reference the device uniquely
@@ -67,8 +67,8 @@ module FRONTENDX {
 					- frame_width || FRONTEND::video_status::frame_width || long || Current width of frames in the video stream
 					- fps || FRONTEND::video_status::fps || double || Current frames per second in the video stream
 					- video_type || FRONTEND::video_status::video_type || string || Example Video Types: CAPTURE, PLAYBACK.
-		Usual port additions include a input (provides) port for the tuner control as well as an output (uses) BULKIO data port that follows the naming convention [interface]_[in/out]. Examples
-		include dataShort_out, dataSDDS_out,  dataOctet_in, and DigitalTuner_in.
+		Usual port additions include a input (provides) port for the audio control as well as an output (uses) BULKIO data port that follows the naming convention [interface]_[in/out]. Examples
+		include dataShort_out, dataSDDS_out,  dataOctet_in, and DigitalAudio_in.
 		
 		
 		Audio Types:
@@ -99,7 +99,7 @@ module FRONTENDX {
 		------------
 		Multi-device frontend devices requires customization of the output port. In this case, data from all devices are sent out a single output port named "data[Type]_out" (ie - dataShort_out). Since there
 		are multiple streams going out of the port, data is routed based off the streams "allocation_id" and the ports "connection_id". For example, lets say you have 3 devices allocated with the respective 
-		allocation id's: allocID_1, allocID_2, and allocID_3. Now lets say you want to make a connection to the device and get the second tuners data. What you would have to do is to connect to the data[Type]_out 
+		allocation id's: allocID_1, allocID_2, and allocID_3. Now lets say you want to make a connection to the device and get the second audios data. What you would have to do is to connect to the data[Type]_out 
 		port with the connection_id set to "allocID_2". 
 	
 	*/

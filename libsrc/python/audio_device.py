@@ -198,7 +198,7 @@ def deallocateAudio(device,allocation_id=None,allAudioDevices=False):
             else:
                 for i in range(len(device.frontend_audio_status)):
                     if allocation_id in device.frontend_audio_status[i].allocation_id_csv:
-                        allocProps = createTunerAllocation(allocation_id=allocation_id)
+                        allocProps = createAudioAllocation(allocation_id=allocation_id)
                         device.deallocateCapacity(allocProps)
                         deallocated = True
     return deallocated
@@ -566,7 +566,7 @@ class FrontendAudioDevice(Device):
         finally:
             self.allocation_id_mapping_lock.release()
     
-    def removeAudioDeviceMappingByTunerId(self, audio_device_id):
+    def removeAudioDeviceMappingByAudioDeviceId(self, audio_device_id):
         self._log.trace("removeAudioDeviceMapping(audio_device_id) audio_device_id " + str(audio_device_id))
         audioDeviceDeleteTuning(self.frontend_audio_status[audio_device_id], audio_device_id)
         removeAllocationIdRouting(audio_device_id)

@@ -341,7 +341,7 @@ class FrontendVideoDevice(Device):
                         if len(self.video_allocation_ids[video_device_id].control_allocation_id)>0 or \
                            not self.videoDeviceSetTuning(frontend_video_allocation, self.frontend_video_status[video_device_id], video_device_id):
                             # either not available or didn't succeed setting tuning, try next video
-                            self._log.debug("allocate_frontend_video_allocation: Tuner["+str(video_device_id)+"] is either not available or didn't succeed while setting tuning ")
+                            self._log.debug("allocate_frontend_video_allocation: videoDevice["+str(video_device_id)+"] is either not available or didn't succeed while setting tuning ")
                             continue
 
                         if channels == self.frontend_video_status[video_device_id].channels and \
@@ -575,7 +575,7 @@ class FrontendVideoDevice(Device):
         finally:
             self.allocation_id_mapping_lock.release()
     
-    def removeVideoDeviceMappingByTunerId(self, video_device_id):
+    def removeVideoDeviceMappingByVideoDeviceId(self, video_device_id):
         self._log.trace("removeVideoDeviceMapping(video_device_id) video_device_id " + str(video_device_id))
         videoDeviceDeleteTuning(self.frontend_video_status[video_device_id], video_device_id)
         removeAllocationIdRouting(video_device_id)
@@ -615,7 +615,7 @@ class FrontendVideoDevice(Device):
         sri.keywords.append(CF.DataType(id=id, value=any.to_any(myValue)))
         return True
 
-    def configureTunerSRI(self, sri, channels, frame_height, frame_width, fps):
+    def configureVideoSRI(self, sri, channels, frame_height, frame_width, fps):
         if sri == None:
             return
 

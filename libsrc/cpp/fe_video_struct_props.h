@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-#ifndef FE_TUNER_STRUCTPROPS_H
-#define FE_TUNER_STRUCTPROPS_H
+#ifndef FE_VIDEO_STRUCTPROPS_H
+#define FE_VIDEO_STRUCTPROPS_H
 
 #include <ossie/CorbaUtils.h>
 #include <ossie/PropertyInterface.h>

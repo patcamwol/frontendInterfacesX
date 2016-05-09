@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-#ifndef FE_TUNER_PORT_H
-#define FE_TUNER_PORT_H
+#ifndef FE_VIDEO_PORT_H
+#define FE_VIDEO_PORT_H
 
 #include <frontend/fe_port_impl.h>
 
@@ -57,10 +57,10 @@ namespace frontendX {
             virtual double getVideoOutputFrameRate(const std::string& id) {
                 throw FRONTEND::NotSupportedException("getVideoOutputFrameRate not supported");
             }
-            virtual CF::Properties* getTunerStatus(const std::string& id) = 0;
+            virtual CF::Properties* getVideoStatus(const std::string& id) = 0;
     };
 
-    class InFrontendVideoTunerPort : public virtual POA_FRONTENDX::FrontendVideo, public Port_Provides_base_impl
+    class InFrontendVideoPort : public virtual POA_FRONTENDX::FrontendVideo, public Port_Provides_base_impl
     {
         public:
             InFrontendVideoPort(std::string port_name, video_delegation *_parent): 
@@ -132,7 +132,7 @@ namespace frontendX {
     class OutFrontendVideoPortT : public frontend::OutFrontendPort<PortType_var, PortType>
     {
         public:
-            OutFrontendVideoPortT(std::string port_name) : OutFrontendPort<PortType_var, PortType>(port_name)
+            OutFrontendVideoPortT(std::string port_name) : frontend::OutFrontendPort<PortType_var, PortType>(port_name)
             {};
             ~OutFrontendVideoPortT(){};
             
@@ -166,7 +166,7 @@ namespace frontendX {
                 return retval;
             };
             CORBA::Long getChannels(std::string &id) {
-                CORBA::Long_var retval;
+                CORBA::Long retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
@@ -180,7 +180,7 @@ namespace frontendX {
                 return retval;
             };
             CORBA::Long getFrameHeight(std::string &id) {
-                CORBA::Long_var retval;
+                CORBA::Long retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
@@ -194,7 +194,7 @@ namespace frontendX {
                 return retval;
             };
             CORBA::Long getFrameWidth(std::string &id) {
-                CORBA::Long_var retval;
+                CORBA::Long retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
@@ -261,14 +261,14 @@ namespace frontendX {
                 }
                 return retval;
             };
-            CF::Properties* getTunerStatus(std::string &id) {
+            CF::Properties* getVideoStatus(std::string &id) {
                 CF::Properties* retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
                     for (i = this->outConnections.begin(); i != this->outConnections.end(); ++i) {
                         try {
-                            retval = ((*i).first)->getTunerStatus(id.c_str());
+                            retval = ((*i).first)->getVideoStatus(id.c_str());
                         } catch(...) {
                         }
                     }

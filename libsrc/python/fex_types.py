@@ -25,7 +25,7 @@ from ossie.properties import simple_property
 from omniORB import any as _any
 
 class frontend_audio_allocation(object):
-    tuner_type = simple_property(id_="FRONTEND::audio_allocation::audio_type",
+    audio_type = simple_property(id_="FRONTEND::audio_allocation::audio_type",
                                      name="audio_type",
                                      type_="string",
                                      )
@@ -91,7 +91,7 @@ class frontend_audio_allocation(object):
         return retval
                                                             
     def getMembers(self):
-        return [("FRONTEND::audio_allocation::audio_type",self.tuner_type),("FRONTEND::audio_allocation::allocation_id",self.allocation_id),("FRONTEND::audio_allocation::sample_rate",self.sample_rate),("FRONTEND::audio_allocation::sample_rate_tolerance",self.sample_rate_tolerance),("FRONTEND::audio_allocation::device_control",self.device_control),("FRONTEND::audio_allocation::full_bandwidth_channels",self.full_bandwidth_channels),("FRONTEND::audio_allocation::low_frequency_effect_channels",self.low_frequency_effect_channels)]
+        return [("FRONTEND::audio_allocation::audio_type",self.audio_type),("FRONTEND::audio_allocation::allocation_id",self.allocation_id),("FRONTEND::audio_allocation::sample_rate",self.sample_rate),("FRONTEND::audio_allocation::sample_rate_tolerance",self.sample_rate_tolerance),("FRONTEND::audio_allocation::device_control",self.device_control),("FRONTEND::audio_allocation::full_bandwidth_channels",self.full_bandwidth_channels),("FRONTEND::audio_allocation::low_frequency_effect_channels",self.low_frequency_effect_channels)]
 
 class default_frontend_audio_status_struct_struct(object):
     audio_type = simple_property(id_="FRONTEND::audio_status::audio_type",

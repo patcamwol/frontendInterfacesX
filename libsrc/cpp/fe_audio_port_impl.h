@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-#ifndef FE_TUNER_PORT_H
-#define FE_TUNER_PORT_H
+#ifndef FE_AUDIO_PORT_H
+#define FE_AUDIO_PORT_H
 
 #include <frontend/fe_port_impl.h>
 
@@ -54,10 +54,10 @@ namespace frontendX {
             virtual double getAudioOutputSampleRate(const std::string& id) {
                 throw FRONTEND::NotSupportedException("getAudioOutputSampleRate not supported");
             }
-            virtual CF::Properties* getTunerStatus(const std::string& id) = 0;
+            virtual CF::Properties* getAudioStatus(const std::string& id) = 0;
     };
 
-    class InFrontendAudioTunerPort : public virtual POA_FRONTENDX::FrontendAudio, public Port_Provides_base_impl
+    class InFrontendAudioPort : public virtual POA_FRONTENDX::FrontendAudio, public Port_Provides_base_impl
     {
         public:
             InFrontendAudioPort(std::string port_name, audio_delegation *_parent): 
@@ -76,12 +76,12 @@ namespace frontendX {
                 std::string _id(id);
                 return (this->parent->getAudioDeviceControl(_id));
             };
-            CORBA::Ushort getFullBandwidthChannels(const char* id) {
+            CORBA::UShort getFullBandwidthChannels(const char* id) {
                 boost::mutex::scoped_lock lock(portAccess);
                 std::string _id(id);
                 return (this->parent->getFullBandwidthChannels(_id));
             };
-            CORBA::Ushort getLowFrequencyEffectChannels(const char* id) {
+            CORBA::UShort getLowFrequencyEffectChannels(const char* id) {
                 boost::mutex::scoped_lock lock(portAccess);
                 std::string _id(id);
                 return (this->parent->getLowFrequencyEffectChannels(_id));
@@ -124,7 +124,7 @@ namespace frontendX {
     class OutFrontendAudioPortT : public frontend::OutFrontendPort<PortType_var, PortType>
     {
         public:
-            OutFrontendAudioPortT(std::string port_name) : OutFrontendPort<PortType_var, PortType>(port_name)
+            OutFrontendAudioPortT(std::string port_name) : frontend::OutFrontendPort<PortType_var, PortType>(port_name)
             {};
             ~OutFrontendAudioPortT(){};
             
@@ -158,7 +158,7 @@ namespace frontendX {
                 return retval;
             };
             CORBA::UShort getFullBandwidthChannels(std::string &id) {
-                CORBA::UShort_var retval;
+                CORBA::UShort retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
@@ -172,7 +172,7 @@ namespace frontendX {
                 return retval;
             };
             CORBA::UShort getLowFrequencyEffectChannels(std::string &id) {
-                CORBA::UShort_var retval;
+                CORBA::UShort retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
@@ -239,14 +239,14 @@ namespace frontendX {
                 }
                 return retval;
             };
-            CF::Properties* getTunerStatus(std::string &id) {
+            CF::Properties* getAudioStatus(std::string &id) {
                 CF::Properties* retval;
                 typename std::vector < std::pair < PortType_var, std::string > >::iterator i;
                 boost::mutex::scoped_lock lock(this->updatingPortsLock);   // don't want to process while command information is coming in
                 if (this->active) {
                     for (i = this->outConnections.begin(); i != this->outConnections.end(); ++i) {
                         try {
-                            retval = ((*i).first)->getTunerStatus(id.c_str());
+                            retval = ((*i).first)->getAudioStatus(id.c_str());
                         } catch(...) {
                         }
                     }
